@@ -4,9 +4,9 @@ import { setCity } from '../slices/citySlice';
 import { RootState } from '../store';
 
 function CityRecommendation() {
-    const { history } = useSelector((state: RootState) => state.historyList);
-
     const dispatch = useDispatch();
+
+    const { history } = useSelector((state: RootState) => state.historyList);
 
     return (
         <ul className='flex w-full flex-wrap justify-center gap-1 sm:gap-3'>

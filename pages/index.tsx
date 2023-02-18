@@ -5,7 +5,6 @@ import { setWeather } from '../slices/weatherSlice';
 import { RootState } from '../store';
 import { ToastContainer, toast } from 'react-toastify';
 import { setLoading } from '../slices/loadingSlice';
-import { getBgColor } from '../services';
 import Head from 'next/head';
 import InputField from '../components/InputField';
 import ClientTime from '../components/ClientTime';
@@ -15,14 +14,39 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Home: NextPage = () => {
-    const [weatherId, setWeatherId] = useState(0);
-
     const dispatch = useDispatch();
+
+    const [weatherId, setWeatherId] = useState(0);
 
     const { currentCity } = useSelector((state: RootState) => state.city);
 
     const API_KEY = '087db5cb3305065ead660de8e1fa75a4';
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`;
+
+    const getBgColor = (id: number) => {
+        if (id === 800) {
+            return 'from-yellow-700 to-orange-700';
+        } else if (id.toString().charAt(0) === '8') {
+            return 'from-sky-700 to-blue-700';
+        } else {
+            const idPrefix = id.toString().charAt(0);
+
+            switch (idPrefix) {
+                case '2':
+                    return 'from-slate-700 to-slate-800';
+                case '3':
+                    return 'from-cyan-600 to-cyan-700';
+                case '5':
+                    return 'from-cyan-700 to-sky-800';
+                case '6':
+                    return 'from-slate-400 to-sky-600';
+                case '7':
+                    return 'from-zinc-500 to-zinc-700';
+            }
+        }
+
+        return '';
+    };
 
     useEffect(() => {
         dispatch(setLoading(true));

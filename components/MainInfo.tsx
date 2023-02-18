@@ -5,6 +5,9 @@ import { UilTemperature, UilTear, UilWind } from '@iconscout/react-unicons';
 import PuffLoader from 'react-spinners/PuffLoader';
 
 function MainInfo() {
+    const [localTime, setLocalTime] = useState('');
+    const [localDay, setLocalDay] = useState('');
+
     const {
         city,
         country,
@@ -16,10 +19,6 @@ function MainInfo() {
         feelLike,
         timeShift,
     } = useSelector((state: RootState) => state.weather);
-
-    const [localTime, setLocalTime] = useState('');
-    const [localDay, setLocalDay] = useState('');
-
     const { isLoading } = useSelector((state: RootState) => state.loading);
 
     const getLocalTime = () => {

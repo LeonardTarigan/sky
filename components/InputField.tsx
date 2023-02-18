@@ -4,16 +4,19 @@ import { UilSearch } from '@iconscout/react-unicons';
 import { RootState } from '../store';
 import { setCity } from '../slices/citySlice';
 import { setHistory } from '../slices/historySlice';
-import { formatString } from '../services';
 
 function InputField() {
     const dispatch = useDispatch();
+
     const prevInput = useRef('');
 
     const [input, setInput] = useState('');
 
     const { history } = useSelector((state: RootState) => state.historyList);
-    const { isValid } = useSelector((state: RootState) => state.city);
+
+    const formatString = (str: string) => {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
 
     const handleSearch = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
