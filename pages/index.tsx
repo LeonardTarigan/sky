@@ -20,7 +20,6 @@ const Home: NextPage = () => {
     const dispatch = useDispatch();
 
     const { currentCity } = useSelector((state: RootState) => state.city);
-    const { history } = useSelector((state: RootState) => state.historyList);
 
     const API_KEY = '087db5cb3305065ead660de8e1fa75a4';
     const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`;
