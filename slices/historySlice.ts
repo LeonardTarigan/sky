@@ -6,7 +6,7 @@ interface HistoryState {
 }
 
 const initialState: HistoryState = {
-    history: ['Tokyo', 'Berlin', 'Paris', 'Boston', 'Seoul'],
+    history: ['Tokyo', 'Berlin', 'Paris', 'Boston', 'Bali'],
 };
 
 export const historySlice = createSlice({

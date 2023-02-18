@@ -8,6 +8,7 @@ function MainInfo() {
     const [localTime, setLocalTime] = useState('');
     const [localDay, setLocalDay] = useState('');
 
+    const { isLoading } = useSelector((state: RootState) => state.loading);
     const {
         city,
         country,
@@ -19,7 +20,6 @@ function MainInfo() {
         feelLike,
         timeShift,
     } = useSelector((state: RootState) => state.weather);
-    const { isLoading } = useSelector((state: RootState) => state.loading);
 
     const getLocalTime = () => {
         let d = new Date();
@@ -38,9 +38,9 @@ function MainInfo() {
             'Saturday',
         ];
 
-        let dayOfWeek = daysOfWeek[d.getDay()];
+        let day = daysOfWeek[d.getDay()];
 
-        let day = ('0' + d.getDate()).slice(-2);
+        let date = ('0' + d.getDate()).slice(-2);
         let month = ('0' + (d.getMonth() + 1)).slice(-2);
         let year = d.getFullYear().toString().slice(-2);
 
@@ -51,7 +51,7 @@ function MainInfo() {
             })
         );
 
-        setLocalDay(`${dayOfWeek}, ${day}/${month}/${year}`);
+        setLocalDay(`${day}, ${date}/${month}/${year}`);
     };
 
     useEffect(() => {

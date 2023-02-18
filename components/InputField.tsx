@@ -34,8 +34,9 @@ function InputField() {
             }
 
             dispatch(setHistory(newHistory));
-
             dispatch(setCity(input));
+
+            localStorage.setItem('history', newHistory.toString());
         }
 
         return;
