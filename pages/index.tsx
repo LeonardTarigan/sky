@@ -1,86 +1,104 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from 'next';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setWeather } from '../slices/weatherSlice';
+import { RootState } from '../store';
+import { ToastContainer, toast } from 'react-toastify';
+import { setLoading } from '../slices/loadingSlice';
+import { getBgColor } from '../services';
+import Head from 'next/head';
+import InputField from '../components/InputField';
+import ClientTime from '../components/ClientTime';
+import MainInfo from '../components/MainInfo';
+import CityRecommendation from '../components/CityRecommendation';
+import axios from 'axios';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home: NextPage = () => {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    const [weatherId, setWeatherId] = useState(0);
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+    const dispatch = useDispatch();
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
+    const { currentCity } = useSelector((state: RootState) => state.city);
+    const { history } = useSelector((state: RootState) => state.historyList);
 
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
+    const API_KEY = '087db5cb3305065ead660de8e1fa75a4';
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`;
 
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
+    useEffect(() => {
+        dispatch(setLoading(true));
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
+        axios
+            .get(WEATHER_API_URL)
+            .then((res) => {
+                dispatch(setLoading(true));
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+                const data = res.data;
 
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
-    </div>
-  )
-}
+                const { name } = data;
+                const { icon, description, id } = data.weather[0];
+                const { temp, humidity, feels_like } = data.main;
+                const { speed } = data.wind;
+                const { country } = data.sys;
+                const timeShift = data.timezone;
 
-export default Home
+                setWeatherId(id);
+
+                dispatch(
+                    setWeather({
+                        city: name,
+                        country: country,
+                        description: description,
+                        iconCode: icon,
+                        temperature: Number(temp.toFixed(0)),
+                        humidity: humidity,
+                        windSpeed: speed,
+                        feelLike: feels_like,
+                        timeShift: timeShift,
+                    })
+                );
+            })
+            .catch((err) => {
+                toast.error(err.response?.data.message, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    theme: 'light',
+                });
+            })
+            .finally(() => {
+                dispatch(setLoading(false));
+            });
+    }, [currentCity]);
+
+    return (
+        <>
+            <Head>
+                <title>Sky</title>
+                <link rel='icon' href='/favicon.ico' />
+            </Head>
+
+            <ToastContainer />
+
+            <div
+                className={`absolute -z-10 h-screen w-full bg-gradient-to-r ${useMemo(
+                    () => getBgColor(weatherId),
+                    [weatherId]
+                )}`}
+            ></div>
+
+            <main className='mx-auto flex h-fit w-full flex-col items-center gap-5 rounded-xl p-5 sm:w-3/4 md:w-2/3 lg:w-2/4'>
+                <CityRecommendation />
+
+                <div className='mt-2 flex w-full flex-col flex-wrap items-center justify-between gap-10 md:mt-10 md:flex-row'>
+                    <InputField />
+
+                    <ClientTime />
+                </div>
+
+                <MainInfo />
+            </main>
+        </>
+    );
+};
+
+export default Home;
