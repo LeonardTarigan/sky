@@ -76,8 +76,10 @@ function MainInfo() {
                             </div>
                         </div>
 
-                        <div className='flex flex-col items-end'>
-                            <div className='capitalize'>{description}</div>
+                        <div className='flex flex-col items-end gap-1'>
+                            <div className='text-end capitalize'>
+                                {description}
+                            </div>
                             <div className='text-5xl'>{temperature}°C</div>
                         </div>
                     </div>
