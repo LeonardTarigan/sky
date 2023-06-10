@@ -20,8 +20,7 @@ const Home: NextPage = () => {
 
     const { currentCity } = useSelector((state: RootState) => state.city);
 
-    const API_KEY = '087db5cb3305065ead660de8e1fa75a4';
-    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${API_KEY}`;
+    const WEATHER_API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${currentCity}&units=metric&appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}`;
 
     const getBgColor = (id: number) => {
         if (id === 800) {
@@ -103,7 +102,7 @@ const Home: NextPage = () => {
             <ToastContainer />
 
             <div
-                className={`absolute -z-10 h-screen w-full bg-gradient-to-r ${useMemo(
+                className={`absolute -z-10 h-screen w-full bg-gradient-to-r transition-all duration-300 ${useMemo(
                     () => getBgColor(weatherId),
                     [weatherId]
                 )}`}

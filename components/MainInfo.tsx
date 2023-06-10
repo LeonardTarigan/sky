@@ -39,7 +39,6 @@ function MainInfo() {
         ];
 
         let day = daysOfWeek[d.getDay()];
-
         let date = ('0' + d.getDate()).slice(-2);
         let month = ('0' + (d.getMonth() + 1)).slice(-2);
         let year = d.getFullYear().toString().slice(-2);
